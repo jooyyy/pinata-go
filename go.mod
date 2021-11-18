@@ -1,4 +1,4 @@
-module pinata-go
+module github.com/jooyyy/pinata-go
 
 go 1.17
 

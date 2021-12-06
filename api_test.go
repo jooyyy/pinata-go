@@ -14,5 +14,4 @@ func TestClient_PinFile(t *testing.T) {
 	)
 	_, err := client.PinFile("uploads/receipt-1636015649-potrait.jpeg")
 	assert.Equal(t, err, nil)
-
 }

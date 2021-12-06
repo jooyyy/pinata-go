@@ -13,10 +13,14 @@ type Client struct {
 }
 
 func New(node string, jwt string, apiKey string, apiSecret string) *Client {
-	return &Client{
-		Node: node,
-		JWT: jwt,
-		ApiKey: apiKey,
-		SecretApiKey: apiSecret,
+	if jwt != "" || (apiKey != "" && apiSecret != "") {
+		return &Client{
+			Node: node,
+			JWT: jwt,
+			ApiKey: apiKey,
+			SecretApiKey: apiSecret,
+		}
 	}
+
+	return nil
 }

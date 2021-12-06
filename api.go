@@ -3,6 +3,8 @@ package pinata
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"strings"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -12,7 +14,7 @@ import (
 
 type PinResponse struct {
 	IpfsHash string `json:"IpfsHash,omitempty"`
-	PinSize string `json:"PinSize,omitempty"`
+	PinSize int64 `json:"PinSize,omitempty"`
 	Timestamp string `json:"Timestamp,omitempty"`
 	Error string `json:"error,omitempty"`
 }
@@ -29,8 +31,9 @@ func (c *Client)PinFile(filepath string) (PinResponse, error) {
 	defer resp.Body.Close()
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return PinResponse{},err
+		return PinResponse{}, err
 	}
+	fmt.Println("debug joy", string(content))
 	var out PinResponse
 	if err = json.Unmarshal(content, &out); err != nil {
 		return PinResponse{},err
@@ -47,7 +50,7 @@ func createMultipartFormData(fileName string) (bytes.Buffer, *multipart.Writer, 
 	if err != nil {
 		return b, w, err
 	}
-	if fw, err = w.CreateFormFile("file", file.Name()); err != nil {
+	if fw, err = w.CreateFormFile("file", formatFilename(fileName)); err != nil {
 		return b, w, err
 	}
 	if _, err = io.Copy(fw, file); err != nil {
@@ -55,5 +58,13 @@ func createMultipartFormData(fileName string) (bytes.Buffer, *multipart.Writer, 
 	}
 	w.Close()
 	return b, w, nil
+}
+
+func formatFilename(in string) string {
+	items := strings.Split(in, "/")
+	if len(items) > 0 {
+		return items[len(items)-1]
+	}
+	return ""
 }
 

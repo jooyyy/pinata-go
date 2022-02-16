@@ -12,9 +12,10 @@ import (
 
 type PinResponse struct {
 	IpfsHash string `json:"IpfsHash,omitempty"`
-	PinSize string `json:"PinSize,omitempty"`
+	PinSize int64 `json:"PinSize,omitempty"`
 	Timestamp string `json:"Timestamp,omitempty"`
 	Error string `json:"error,omitempty"`
+	IsDuplicate bool `json:"isDuplicate,omitempty"`
 }
 
 func (c *Client)PinFile(filepath string) (PinResponse, error) {

@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type PinResponse struct {
@@ -42,16 +42,16 @@ func (c *Client)PinFile(filepath string) (PinResponse, error) {
 	return out, nil
 }
 
-func createMultipartFormData(fileName string) (bytes.Buffer, *multipart.Writer, error) {
+func createMultipartFormData(filePath string) (bytes.Buffer, *multipart.Writer, error) {
 	var b bytes.Buffer
 	var err error
 	w := multipart.NewWriter(&b)
 	var fw io.Writer
-	file, err := os.Open(fileName)
+	file, err := os.Open(filePath)
 	if err != nil {
 		return b, w, err
 	}
-	if fw, err = w.CreateFormFile("file", formatFilename(fileName)); err != nil {
+	if fw, err = w.CreateFormFile("file", formatFilename(filePath)); err != nil {
 		return b, w, err
 	}
 	if _, err = io.Copy(fw, file); err != nil {
@@ -61,8 +61,8 @@ func createMultipartFormData(fileName string) (bytes.Buffer, *multipart.Writer, 
 	return b, w, nil
 }
 
-func formatFilename(in string) string {
-	items := strings.Split(in, "/")
+func formatFilename(path string) string {
+	items := strings.Split(path, "/")
 	if len(items) > 0 {
 		return items[len(items)-1]
 	}
